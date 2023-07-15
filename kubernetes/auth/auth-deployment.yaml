@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: adl-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: 664865334263.dkr.ecr.ap-south-1.amazonaws.com/auth
+          volumeMounts:
+          - name: log
+            mountPath: /srv/www/auth/current/logs/auth
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 50002
+      volumes:
+      - name: log
+        persistentVolumeClaim:
+          claimName: auth-pvc
