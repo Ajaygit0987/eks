@@ -1,0 +1,1 @@
+gateway microservices setup detais
