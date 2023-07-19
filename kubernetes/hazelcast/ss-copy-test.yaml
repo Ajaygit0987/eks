@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hazelcast
+  labels:
+    app: hazelcast
+spec:
+  replicas: 2
+  serviceName: hazelcast
+  selector:
+    matchLabels:
+      app: hazelcast
+  template:
+    metadata:
+      labels:
+        app: hazelcast
+    spec:
+      containers:
+      - name: hazelcast
+        image: hazelcast/hazelcast:3.12.12
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: hazelcast
+          containerPort: 5701
+        livenessProbe:
+          httpGet:
+            path: /hazelcast/health/node-state
+            port: 5701
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /hazelcast/health/node-state
+            port: 5701
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 1
+        volumeMounts:
+        - name: hazelcast-storage
+          mountPath: /data/hazelcast
+        - name: hazelcast-config
+          mountPath: /data/hazelcast/hazelcast.yaml
+          subPath: hazelcast.yaml
+        env:
+        - name: JAVA_OPTS
+          value: "-Dhazelcast.config=/data/hazelcast/hazelcast.yaml -Dhazelcast.rest.enabled=true"
+        - name: MIN_HEAP_SIZE
+          value: "1G"
+        - name: MAX_HEAP_SIZE
+          value: "1.5G"
+      volumes:
+      - name: hazelcast-storage
+        persistentVolumeClaim:
+          claimName: hazelcast-pvc
+      - name: hazelcast-config
+        configMap:
+          name: hazelcast-config
+

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hazelcast-config
+  namespace: adl-dev
+data:
+  hazelcast.yaml: |-
+     hazelcast:
+      group:
+        name: adl-dev
+        password: YXxNONejhNmLqw
+      network:
+        join:
+          multicast:
+            enabled: false
+          kubernetes:
+            enabled: true
+            namespace: adl-dev
+            service-name: hazelcast
+      rest-api:
+          enabled: true
+          endpoint-groups:
+            HEALTH_CHECK:
+              enabled: true
+      management-center:
+        enabled: true
+        url: http://a5f0772a81c8642c0817ad72aabc6642-618697051.ap-south-1.elb.amazonaws.com:8080/hazelcast-mancenter
+
