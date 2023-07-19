@@ -24,5 +24,4 @@ data:
               enabled: true
       management-center:
         enabled: true
-        url: http://a5f0772a81c8642c0817ad72aabc6642-618697051.ap-south-1.elb.amazonaws.com:8080/hazelcast-mancenter
-
+        url: http://172.20.103.187:8080/hazelcast-mancenter
